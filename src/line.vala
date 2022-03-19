@@ -21,18 +21,25 @@ namespace LiveChart {
         protected Points draw_line(Points points, Context ctx, Config config) {
             line.configure(ctx);
             
-            var first_point = points.first();
-
+            int pos = 0;
             this.update_bounding_box(points, config);
             this.debug(ctx);
 
+            //ctx.move_to(first_point.x, first_point.y);
+            for (; pos < points.size - 1; pos++){
+                if(!this.is_out_of_area(points.get(pos))){
+                    break;
+                }
+            }
+            var first_point = points.get(pos);
             ctx.move_to(first_point.x, first_point.y);
-            for (int pos = 0; pos < points.size -1; pos++) {
+            for (; pos < points.size -1; pos++) {
                 var current_point = points.get(pos);
                 var next_point = points.after(pos);
                 if (this.is_out_of_area(current_point)) {
-                    ctx.move_to(current_point.x, current_point.y);
-                    continue;
+                    //ctx.move_to(current_point.x, current_point.y);
+                    //continue;
+                    break;
                 }
 
                 ctx.line_to(next_point.x, next_point.y);
