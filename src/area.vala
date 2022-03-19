@@ -24,7 +24,7 @@
                 var boundaries = config.boundaries();
                 var first_point = points.first();
                 var last_point = points.last();
-				var horizon = config.get_y_horizon();
+                var horizon = config.get_y_horizon();
                 ctx.set_source_rgba(this.color.red, this.color.green, this.color.blue, alpha);
                 ctx.line_to(last_point.x, last_point.y);
                 ctx.line_to(last_point.x, horizon);

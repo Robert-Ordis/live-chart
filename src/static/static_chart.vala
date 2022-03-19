@@ -23,11 +23,11 @@ namespace LiveChart.Static {
             this.draw.connect(render);
 #endif            
 #if GTK4
-			this.set_draw_func((_, ctx, width, height) => {
-				this.config.height = height;
-				this.config.width = width;
-				this.render(_, ctx);
-			});
+            this.set_draw_func((_, ctx, width, height) => {
+                this.config.height = height;
+                this.config.width = width;
+                this.render(_, ctx);
+            });
 #endif
             
             series = new StaticSeries(this);

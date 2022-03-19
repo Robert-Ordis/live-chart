@@ -16,7 +16,7 @@ namespace LiveChart {
         };
         public Gdk.RGBA main_color { 
             get; set; 
-			default= Gdk.RGBA() {
+            default= Gdk.RGBA() {
                 red = 1.0f,
                 green = 1.0f,
                 blue = 1.0f,

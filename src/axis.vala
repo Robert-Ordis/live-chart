@@ -75,12 +75,12 @@ namespace LiveChart {
 
         public void update(int area_height) {
             var distance = bounds.upper;
-			if(ticks.values.size > 0){
-				distance -= ticks.values[0];
-			}
-			else{
-				distance -= bounds.lower;
-			}
+            if(ticks.values.size > 0){
+                distance -= ticks.values[0];
+            }
+            else{
+                distance -= bounds.lower;
+            }
             if (distance != 0.0f && this.fixed_max == null) {
                 this.ratio = (double) area_height / (distance * ratio_threshold);
             }
@@ -136,20 +136,20 @@ namespace LiveChart {
                 }
                 
                 //limit = (bounds.lower == lower) ? lower : bounds.lower - interval;
-				
-				if(bounds.lower < 0.0){
-					limit = (bounds.lower);
-					for(var value = -interval; value > limit; value -= interval){
-						ticks.values.add(value);
-					}
-					ticks.values.add((float)limit);
-					ticks.values.sort((a, b) => {
-						var r = a - b;
-						if(r < 0){return -1;}
-						if(r > 0){return 1;}
-						return 0;
-					});
-				}
+                
+                if(bounds.lower < 0.0){
+                    limit = (bounds.lower);
+                    for(var value = -interval; value > limit; value -= interval){
+                        ticks.values.add(value);
+                    }
+                    ticks.values.add((float)limit);
+                    ticks.values.sort((a, b) => {
+                        var r = a - b;
+                        if(r < 0){return -1;}
+                        if(r > 0){return 1;}
+                        return 0;
+                    });
+                }
 
                 
             }
