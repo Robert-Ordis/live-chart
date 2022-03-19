@@ -16,7 +16,10 @@ namespace LiveChart {
             }
             this.series.add(serie);
             //if values were added to serie before registration
-            serie.get_values().foreach((value) => {chart.config.y_axis.update_bounds(value.value); return true;});
+            serie.get_values().foreach((value) => {
+                chart.config.y_axis.update_bounds(value.value); 
+                return true;
+            });
             
             if(chart.legend != null) chart.legend.add_legend(serie);
             var sh = serie.value_added.connect((value) => {
@@ -41,11 +44,13 @@ namespace LiveChart {
         }
         
         public void remove_serie(Serie serie){
-            if(signals.has_key(serie) && series.contains(serie)){
+            if(signals.has_key(serie)){
                 var sh = signals[serie];
                 serie.disconnect(sh);
-                series.remove(serie);
                 signals.unset(serie);
+            }
+            if(series.contains(serie)){
+                series.remove(serie);
             }
             if(chart.legend != null){
                 chart.legend.remove_legend(serie);
