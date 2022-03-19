@@ -42,24 +42,24 @@ namespace LiveChart {
     
 
     public class Config {
-		private int _width = 0;
+        private int _width = 0;
         public int width {
             get{
-				return _width;
-			}
-			set{
-				if(_width != value){
-					//i = config.width - config.padding.right; i > config.padding.left; i -= config.x_axis.tick_length
-					if(x_axis.tick_length <= 0.0){
-						time.head_offset = -1.0;
-					}
-					else{
-						var tmp = value / x_axis.tick_length;
-						time.head_offset = tmp * x_axis.tick_interval * 1000.0;
-					}
-				}
-				_width = value;
-			}
+                return _width;
+            }
+            set{
+                if(_width != value){
+                    //i = config.width - config.padding.right; i > config.padding.left; i -= config.x_axis.tick_length
+                    if(x_axis.tick_length <= 0.0){
+                        time.head_offset = -1.0;
+                    }
+                    else{
+                        var tmp = (value - padding.right - padding.left) / x_axis.tick_length;
+                        time.head_offset = tmp * x_axis.tick_interval * 1000.0;
+                    }
+                }
+                _width = value;
+            }
         }
 
         public int height {
@@ -104,7 +104,14 @@ namespace LiveChart {
             
             this.y_axis.update(this.boundaries().height);
         }
-
+        
+        public double get_y_horizon(){
+            var boundaries = this.boundaries();
+            var values = this.y_axis.ticks.values;
+            var bottom = values.size > 0 ? values[0] : 0.0;
+            return boundaries.height + boundaries.y.min - (0.0 - bottom) * this.y_axis.get_ratio();
+        }
+        
         private void configure_y_max_labels_extents(Context ctx) {
             TextExtents extents;
             if (y_axis.visible && y_axis.labels.visible) {

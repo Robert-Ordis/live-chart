@@ -56,6 +56,9 @@ namespace LiveChart {
             bounds.notify["upper"].connect(() => {
                 this.ticks = get_ticks();
             });
+            bounds.notify["lower"].connect(() => {
+                this.ticks = get_ticks();
+            });
         }
 
         public double get_ratio() {
@@ -71,8 +74,15 @@ namespace LiveChart {
         }
 
         public void update(int area_height) {
-            if (bounds.has_upper() && this.fixed_max == null) {
-                this.ratio = (double) area_height / ((double) bounds.upper * ratio_threshold);
+            var distance = bounds.upper;
+			if(ticks.values.size > 0){
+				distance -= ticks.values[0];
+			}
+			else{
+				distance -= bounds.lower;
+			}
+            if (distance != 0.0f && this.fixed_max == null) {
+                this.ratio = (double) area_height / (distance * ratio_threshold);
             }
             
             if (this.fixed_max != null) {
@@ -104,6 +114,47 @@ namespace LiveChart {
 
                 return ticks;
             }
+            float distance = LiveChart.cap((float)(bounds.upper - bounds.lower));
+            float upper = LiveChart.cap((float)bounds.upper);
+            float lower = -LiveChart.cap((float)bounds.lower.abs());
+            
+            //float distance = (upper >= lower.abs()) ? upper : lower.abs();
+            
+            var divs = LiveChart.golden_divisors(distance);
+
+            if (divs.size > 0) {
+                float interval = distance / divs.get(0);
+                foreach(float div in divs) {
+                    interval = distance / div;
+                    if (div > 3f && div < 7f) {
+                        break;
+                    }
+                }
+                var limit = (bounds.upper == upper) ? upper : bounds.upper + interval;
+                for (var value = 0f; value <= limit; value += interval) {
+                    ticks.values.add(value);
+                }
+                
+                //limit = (bounds.lower == lower) ? lower : bounds.lower - interval;
+				
+				if(bounds.lower < 0.0){
+					limit = (bounds.lower);
+					for(var value = -interval; value > limit; value -= interval){
+						ticks.values.add(value);
+					}
+					ticks.values.add((float)limit);
+					ticks.values.sort((a, b) => {
+						var r = a - b;
+						if(r < 0){return -1;}
+						if(r > 0){return 1;}
+						return 0;
+					});
+				}
+
+                
+            }
+        
+            /*
             if (bounds.has_upper()) {
                 float upper = LiveChart.cap((float) bounds.upper);
                 var divs = LiveChart.golden_divisors(upper);
@@ -122,6 +173,7 @@ namespace LiveChart {
                     }
                 }
             }
+            */
 
             return ticks;
         }

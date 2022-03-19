@@ -96,9 +96,9 @@ namespace LiveChart {
         protected void render_hgrid(Context ctx, Config config) {
             
             var boundaries = config.boundaries();
-            foreach(float position in config.y_axis.ticks.values) {
-
-                var y = boundaries.height + boundaries.y.min - position * config.y_axis.get_ratio();
+            var values = config.y_axis.ticks.values;
+            foreach(float position in values) {
+                var y = boundaries.height + boundaries.y.min - (position - values[0]) * config.y_axis.get_ratio();
                 if(y < boundaries.y.min) {
                     break;
                 }

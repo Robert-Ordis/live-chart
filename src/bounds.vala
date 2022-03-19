@@ -9,7 +9,8 @@ namespace LiveChart {
             get; private set;
         }
 
-        public Bounds(double lower = double.NAN, double upper = double.NAN) {
+        //public Bounds(double lower = double.NAN, double upper = double.NAN) {
+        public Bounds(double lower = 0.0, double upper = 0.0) {
             this.lower = lower;
             this.upper = upper;
         }
