@@ -162,10 +162,10 @@ namespace LiveChart {
                 reticle.draw(ctx, this.config);
             }
             
+            ctx.rectangle(boundaries.x.min, boundaries.y.min, boundaries.x.max, boundaries.y.max);
+            ctx.clip();
             
             foreach (Drawable serie in this.series) {
-                ctx.rectangle(boundaries.x.min, boundaries.y.min, boundaries.x.max, boundaries.y.max);
-                ctx.clip();
                 serie.draw(ctx, this.config);
             }
             
