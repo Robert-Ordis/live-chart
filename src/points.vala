@@ -58,7 +58,9 @@ namespace LiveChart {
             if (values.size > 1) {
                 /// \note SortedSet<G>.sub_set won't work as I expected correctly.
                 TimestampedValue border = {(double)config.time.current + 1, 0.0};
-
+                TimestampedValue lower = {border.timestamp - config.time.head_offset, 0.0};
+                SortedSet<TimestampedValue?> renderee = null;
+/*
                 var renderee = values.head_set(border);
                 if(config.time.head_offset >= 0.0 && renderee.size > 0){
                     border.timestamp -= config.time.head_offset;
@@ -66,14 +68,19 @@ namespace LiveChart {
                         renderee = renderee.tail_set(border);
                     }
                 }
-
-                //var renderee = values;
-                if(renderee.size <= 2){
+*/
+                if(config.time.head_offset > 0.0 && values.first().timestamp < lower.timestamp){
+                    renderee = values.sub_set(lower, border);
+                }
+                else{
+                    renderee = values.head_set(border);
+                }
+                if(renderee.size <= 1){
                     return points;
                 }
                 var last_value = renderee.last();
                 //points.realtime_delta = (((GLib.get_real_time() / 1000) - last_value.timestamp) * config.x_axis.get_ratio()) / 1000;
-                points.realtime_delta = ((config.time.current - last_value.timestamp) * config.x_axis.get_ratio()) / 1000;
+                //points.realtime_delta = ((config.time.current - last_value.timestamp) * config.x_axis.get_ratio()) / 1000;
                 foreach (TimestampedValue value in renderee) {
                     var point = Points.value_to_point(last_value, value, config, boundaries, points.realtime_delta);
                     points.add(point);
@@ -89,7 +96,9 @@ namespace LiveChart {
                 y_min = config.y_axis.ticks.values[0];
             }
             return Point() {
-                x = (boundaries.x.max - (last_value.timestamp - current_value.timestamp) / 1000 * config.x_axis.get_ratio()) - realtime_delta,
+                //x = (boundaries.x.max - (last_value.timestamp - current_value.timestamp) / 1000 * config.x_axis.get_ratio()) - realtime_delta,
+                x = (boundaries.x.max - (config.time.current - current_value.timestamp) 
+                    * config.x_axis.get_ratio() / config.time.conv_sec),
                 y = boundaries.y.max - ((current_value.value - y_min) * config.y_axis.get_ratio()),
                 height = current_value.value * config.y_axis.get_ratio()
             };
