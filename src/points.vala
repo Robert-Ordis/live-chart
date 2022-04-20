@@ -89,8 +89,18 @@ namespace LiveChart {
          
             return points;
         }
-
-        private static Point value_to_point(TimestampedValue last_value, TimestampedValue current_value, Config config, Boundaries boundaries, double realtime_delta) {
+        
+        public static Points create_raw(Collection<TimestampedValue?> values, Config config){
+            var boundaries = config.boundaries();
+            Points points = new Points();
+            foreach (TimestampedValue value in values) {
+                var point = Points.value_to_point(value, value, config, boundaries, 0);
+                points.add(point);
+            }
+            return points;
+        }
+        
+        public static Point value_to_point(TimestampedValue last_value, TimestampedValue current_value, Config config, Boundaries boundaries, double realtime_delta) {
             double y_min = 0.0;
             if(config.y_axis.ticks.values.size > 0){
                 y_min = config.y_axis.ticks.values[0];
