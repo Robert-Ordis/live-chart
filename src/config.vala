@@ -50,15 +50,9 @@ namespace LiveChart {
             set{
                 if(_width != value){
                     //i = config.width - config.padding.right; i > config.padding.left; i -= config.x_axis.tick_length
-                    if(x_axis.tick_length <= 0.0){
-                        time.head_offset = -1.0;
-                    }
-                    else{
-                        var tmp = (value - padding.right - padding.left) / x_axis.tick_length;
-                        time.head_offset = tmp * x_axis.tick_interval * 1000.0;
-                    }
+                    _width = value;
+                    this.reconf_head_offset();
                 }
-                _width = value;
             }
         }
 
@@ -144,6 +138,31 @@ namespace LiveChart {
             }
 
             x_axis.labels.extents = extents;
+        }
+        
+        private void reconf_head_offset(){
+            if(x_axis.tick_length <= 0.0){
+                time.head_offset = -1.0;
+            }
+            else{
+                var tmp = (this._width - padding.right - padding.left) / x_axis.tick_length;
+                time.head_offset = tmp * x_axis.tick_interval * this.time.conv_sec;
+            }
+        }
+        
+        public void change_x_axis_tick(float length, float interval){
+            bool changed = false;
+            if(length > 0.0f){
+                changed |= this.x_axis.tick_length != length;
+                this.x_axis.tick_length = length;
+            }
+            if(interval >= 0.0f){
+                changed |= this.x_axis.tick_interval != interval;
+                this.x_axis.tick_interval = interval;
+            }
+            if(changed){
+                this.reconf_head_offset();
+            }
         }
     }
 }
