@@ -119,7 +119,7 @@ namespace LiveChart {
                 source_timeout = Timeout.add(ms, () => {
                     if(this.play_ratio != 0.0){
                         var now = GLib.get_monotonic_time() / 1000;
-                        config.time.current += (int64)((now - this.prev_time) * this.play_ratio);
+                        config.time.current += (int64)((now - this.prev_time) * this.config.time.conv_ms * this.play_ratio);
                         this.prev_time = now;
                     }
                     this.queue_draw();
