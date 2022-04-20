@@ -67,9 +67,16 @@ namespace LiveChart {
         }
 
         protected void render_vgrid(Context ctx, Config config) {
-            // var time = new DateTime.now().to_unix();
-            var time = config.time.current / 1000;
-            for (double i = config.width - config.padding.right; i > config.padding.left; i -= config.x_axis.tick_length) {
+            
+            var grid_interval = (int64)(config.x_axis.tick_interval * config.time.conv_sec);
+            var time = config.time.current;
+            var gap = 0.0;
+            if(config.movable_timeline){
+                time = time - (config.time.current % grid_interval);
+                gap = (config.time.current - time) * config.x_axis.get_ratio() / config.time.conv_sec;
+            }
+            
+            for (double i = config.width - config.padding.right - gap; i > config.padding.left; i -= config.x_axis.tick_length) {
                 if (config.x_axis.lines.visible) {
                     config.x_axis.lines.configure(ctx);
                     ctx.move_to((int) i + 0.5, 0.5 + config.height - config.padding.bottom);
@@ -81,7 +88,7 @@ namespace LiveChart {
                 // Labels
                 if (config.x_axis.visible && config.x_axis.labels.visible) {
                     config.x_axis.labels.font.configure(ctx);
-                    var text = new DateTime.from_unix_local(time).format("%H:%M:%S");
+                    var text = config.time.get_time_str(time);
                     TextExtents extents;
                     ctx.text_extents(text, out extents);
                     
@@ -89,7 +96,7 @@ namespace LiveChart {
                     ctx.show_text(text);
                     ctx.stroke();
                 }
-                time -= (int) config.x_axis.tick_interval;
+                time -= grid_interval;
             }
         }
 

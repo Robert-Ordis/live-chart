@@ -23,6 +23,7 @@ sources = files(
     'series.vala',
     'smooth_line_area.vala',
     'smooth_line.vala',
+    'time_seek.vala',
     'threshold_line.vala',
     'utils.vala',
     'values.vala',
@@ -49,6 +50,7 @@ livechart_lib = library(
 )
 
 pkg = import('pkgconfig')
+
 pkg.generate(
     version: meson.project_version(),
     libraries: livechart_lib,

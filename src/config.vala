@@ -64,8 +64,7 @@ namespace LiveChart {
 
         public YAxis y_axis = new YAxis();
         public XAxis x_axis = new XAxis();
-        
-        /// \todo configuring timescale by prefix of unit:sec. e.g. 'm' for ms, 'u' for us, 's' for sec.
+        public bool movable_timeline = false;
         
         public TimeSeek time = new TimeSeek();
         
