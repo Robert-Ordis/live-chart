@@ -21,6 +21,8 @@ namespace LiveChart {
         
         private int64 prev_time;
         
+        private PointReticle pointing = new PointReticle();
+        
         public Chart(Config config = new Config()) {
             this.config = config;
 
@@ -38,6 +40,7 @@ namespace LiveChart {
                 this.render(_, ctx);
             });
 #endif
+
             this.refresh_every(100);
 
             series = new Series(this);
@@ -125,6 +128,19 @@ namespace LiveChart {
             }
         }
 
+        public void aim_to_point(double x, double y, bool with_guide){
+            this.pointing.point.x = x;
+            this.pointing.point.y = y;
+            this.pointing.guide = with_guide;
+        }
+        
+        public bool get_aimed_value(out TimestampedValue tv){
+            var tv_ = TimestampedValue();
+            var ret = this.pointing.refer_plot_value(ref tv_, this.config, this.config.boundaries(), this.series);
+            tv = tv_;
+            return ret;
+        }
+        
         private bool render(Gtk.Widget _, Context ctx) {
             ctx.set_antialias(Cairo.Antialias.NONE);
             config.configure(ctx, legend);
@@ -140,7 +156,26 @@ namespace LiveChart {
                 serie.draw(ctx, this.config);
             }
             
-            return true;
+            if(this.pointing.is_enabled()){
+                var point = this.pointing.point;
+                Gdk.RGBA color = {1.0f, 1.0f, 1.0f, 1.0f};
+                ctx.set_source_rgba(color.red, color.green, color.blue, color.alpha);
+                if(this.pointing.guide){
+                    var tv = TimestampedValue();
+                    
+                    this.pointing.refer_plot_value(ref tv, this.config, boundaries, this.series);
+                    
+                    point = Points.value_to_point(tv, tv, this.config, boundaries, 0.0);
+                    ctx.move_to(this.pointing.point.x, this.pointing.point.y);
+                    ctx.show_text("[%s, %f]".printf(this.config.time.get_time_str((int64)tv.timestamp), tv.value));
+                }
+                ctx.move_to((double) boundaries.x.min, point.y);
+                ctx.line_to((double) boundaries.x.max, point.y);
+                ctx.move_to(point.x, (double) boundaries.y.min);
+                ctx.line_to(point.x, (double) boundaries.y.max);
+                ctx.stroke();
+            }
+            return false;
         }
     }
 }

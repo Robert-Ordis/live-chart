@@ -94,5 +94,21 @@ namespace LiveChart {
                 height = current_value.value * config.y_axis.get_ratio()
             };
         }
+        
+        public static TimestampedValue point_to_value(Point point, Config config, Boundaries boundaries){
+            var ret = TimestampedValue();
+            var y_min = 0.0;
+            if(config.y_axis.ticks.values.size > 0){
+                y_min = config.y_axis.ticks.values[0];
+            }
+            
+            ret.timestamp = (double)config.time.current 
+                - (boundaries.x.max - point.x) * config.time.conv_sec / config.x_axis.get_ratio();
+            ret.value = y_min
+                + (boundaries.y.max - point.y) / config.y_axis.get_ratio();
+            
+            return ret;
+        }
+        
     }
 }
