@@ -94,10 +94,11 @@ namespace LiveChart {
         }
         
         public double get_y_horizon(){
-            var boundaries = this.boundaries();
+            //var boundaries = this.boundaries();
             var values = this.y_axis.ticks.values;
             var bottom = values.size > 0 ? values[0] : 0.0;
-            return boundaries.height + boundaries.y.min - (0.0 - bottom) * this.y_axis.get_ratio();
+            //return boundaries.height + boundaries.y.min - (0.0 - bottom) * this.y_axis.get_ratio();
+            return this.height - this.padding.bottom - (0.0 - bottom) * this.y_axis.get_ratio();
         }
         
         private void configure_y_max_labels_extents(Context ctx) {
