@@ -48,7 +48,24 @@ namespace LiveChart {
             renderer.get_values().add({GLib.get_real_time() / 1000, value});
             value_added(value);
         }
-
+        
+        public bool add_all(Gee.SortedSet<TimestampedValue?> c){
+            var values = renderer.get_values();
+            /*
+            foreach(var v in c){
+                values.add(v);
+                value_added(v.value);
+            }
+            
+            return true;
+            */
+            double upper, lower;
+            var r = values.add_all_ts(c, out upper, out lower);
+            value_added(upper);
+            value_added(lower);
+            return r;
+        }
+        
         public void add_with_timestamp(double value, int64 timestamp) {
             renderer.get_values().add({timestamp, value});
             value_added(value);
