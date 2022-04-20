@@ -116,7 +116,7 @@ namespace LiveChart {
             }
             float distance = LiveChart.cap((float)(bounds.upper - bounds.lower));
             float upper = LiveChart.cap((float)bounds.upper);
-            float lower = -LiveChart.cap((float)bounds.lower.abs());
+            //float lower = -LiveChart.cap((float)bounds.lower.abs());
             
             //float distance = (upper >= lower.abs()) ? upper : lower.abs();
             
