@@ -107,7 +107,11 @@ namespace LiveChart {
             pixbuff.savev(filename, "png", {}, {});
 #endif
         }
-
+        
+        public void refresh_now(){
+            this.queue_draw();
+        }
+        
         public void refresh_every(int ms, double play_ratio = 1.0) {
             this.play_ratio = play_ratio;
             if (source_timeout != 0) {
