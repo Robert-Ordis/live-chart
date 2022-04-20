@@ -71,14 +71,9 @@ namespace LiveChart {
         public YAxis y_axis = new YAxis();
         public XAxis x_axis = new XAxis();
         
-        public struct TimeSeek {
-            int64 current;
-            double head_offset;
-        }
-        public TimeSeek time = {
-            GLib.get_real_time() / 1000,
-            0
-        };
+        /// \todo configuring timescale by prefix of unit:sec. e.g. 'm' for ms, 'u' for us, 's' for sec.
+        
+        public TimeSeek time = new TimeSeek();
         
         internal Gee.ArrayList<string> categories;
 
