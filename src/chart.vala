@@ -146,7 +146,7 @@ namespace LiveChart {
                 });
             }
         }
-
+        
         private bool render(Gtk.Widget _, Context ctx) {
             
             var boundaries = this.config.boundaries();
@@ -164,11 +164,10 @@ namespace LiveChart {
             
             ctx.rectangle(boundaries.x.min, boundaries.y.min, boundaries.width, boundaries.height);
             ctx.clip();
-            
             foreach (Drawable serie in this.series) {
+                ctx.new_path();
                 serie.draw(ctx, this.config);
             }
-            
             return false;
         }
     }
