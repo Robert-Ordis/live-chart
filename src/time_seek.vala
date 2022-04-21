@@ -11,9 +11,9 @@ namespace LiveChart{
         private string fmt;
         
         public TimeSeek(){
-            this.current = GLib.get_real_time();
             this.head_offset = 0.0;
             this.set_range("m");
+            this.current = GLib.get_real_time() / this.conv_us;
         }
         
         public void set_range(string unit_sec){
