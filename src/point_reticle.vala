@@ -91,6 +91,8 @@ namespace LiveChart {
                     this.workset.clear();
                     
                     foreach(var serie in series){
+                        /// \todo Serie.get_nearest_values(timestamp, config, ref list);
+                        ///            -> If I want to implement Candlestick chart, then the above func is necessary.
                         Gee.SortedSet<TimestampedValue?> values = serie.get_values();
                         if(!serie.visible){
                             continue;
@@ -101,20 +103,27 @@ namespace LiveChart {
                             continue;
                         }
                         
+/*
                         if(this.workset.size > 0){
                             var v = values.first();
                             if(this.workset.first().timestamp < v.timestamp){
                                 this.workset.clear();
                             }
                         }
+*/
                         this.workset.add(values.first());
                     }
                     
                     if(this.workset.size > 0){
                         var values = this.workset.tail_set(tv);
-                        var final_val = (values.size > 0) ? values.first() : this.workset.first();
-                        if(tv.timestamp < (final_val.timestamp + (config.x_axis.tick_interval * config.time.conv_sec) / 8)){
-                            tv = final_val;
+                        if(values.size <= 0){
+                            values = this.workset;
+                        }
+                        foreach(var final_val in values){
+                            if(tv.timestamp < (final_val.timestamp + (config.x_axis.tick_interval * config.time.conv_sec) / 8)){
+                                tv = final_val;
+                                break;
+                            }
                         }
                     }
                 }
