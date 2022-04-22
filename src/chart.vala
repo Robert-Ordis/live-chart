@@ -23,6 +23,15 @@ namespace LiveChart {
         
         private Gee.List<PointReticle> reticles = new Gee.LinkedList<PointReticle>();
         
+        
+        public signal void on_legend_clicked(Gdk.Device device, Serie? serie, uint btn_num);
+        public signal void on_chart_clicked(Gdk.Device device, double x, double y, uint btn_num);
+        public signal void on_chart_motioned(Gdk.Device device, double x, double y);
+        public signal void on_chart_scrolled(Gdk.Device device, double dx, double dy);
+        
+        private Gee.Map<Gdk.Device, ChartEventPosition?> click_pos = new Gee.HashMap<Gdk.Device, ChartEventPosition?>();
+        private Gee.Map<Gdk.Device, ChartEventPosition?> moved_pos = new Gee.HashMap<Gdk.Device, ChartEventPosition?>();
+        
         public Chart(Config config = new Config()) {
             this.config = config;
 
@@ -47,16 +56,105 @@ namespace LiveChart {
             this.destroy.connect(() => {
                 refresh_every(-1);
                 remove_all_series();
+                foreach(var r in this.reticles){
+                    r.parent = null;
+                    r.target_serie = null;
+                }
+                this.reticles.clear();
             });
+            
+            var builder = new ChartEventBuilder(this);
+            builder.define_motion((device, x, y) => {
+                ChartEventPosition curr = {x, y, 0, this.get_position_attribute(x, y)};
+                if(curr.attr == ChartEventPositionAttr.PLOT_AREA){
+                    this.on_chart_motioned(device, x, y);
+                }
+                else if(this.moved_pos.has_key(device)){
+                    if(this.moved_pos[device].attr == ChartEventPositionAttr.PLOT_AREA){
+                        this.on_chart_motioned(device, double.NAN, double.NAN);
+                    }
+                }
+                this.moved_pos[device] = curr;
+            });
+            
+            builder.define_clicked(
+                (device, x, y, btn) => {
+                    this.click_pos[device] = {x, y, btn, this.get_position_attribute(x, y)};
+                },
+                (device, x, y, btn) => {
+                    if(!this.click_pos.has_key(device)){
+                        return;
+                    }
+                    var prev = this.click_pos[device];
+                    var attr = this.get_position_attribute(x, y);
+                    this.click_pos.unset(device);
+                    
+                    if(prev.attr != attr || prev.btn != btn){
+                        return;
+                    }
+                    
+                    switch(attr){
+                    case PLOT_AREA:
+                        this.on_chart_clicked(device, x, y, btn);
+                        break;
+                    case LEGEND_AREA:
+                        this.on_legend_clicked(device, this.legend.get_clicked_serie(x, y, this.config), btn);
+                        break;
+                    default:
+                        break;
+                    }
+                    
+                }
+            );
+            
+            builder.define_scrolled((device, dx, dy) => {
+                if(!this.moved_pos.has_key(device)){
+                    return;
+                }
+                var pos = this.moved_pos[device];
+                switch(pos.attr){
+                case PLOT_AREA:
+                    this.on_chart_scrolled(device, dx, dy);
+                    break;
+                case LEGEND_AREA:
+                    this.legend.slide_list(dy * 4);
+                    break;
+                default:
+                    break;
+                }
+            });
+            
         }
         
         ~Chart(){
-            foreach(var v in this.reticles){
-                v.parent = null;
-            }
-            this.reticles.clear();
+            print("Chart::destructor\n");
         }
         
+        private ChartEventPositionAttr get_position_attribute(double x, double y){
+            
+            //LEGEND_AREA
+            do{
+                if(this.legend.is_focused(x, y, this.config)){
+                    return ChartEventPositionAttr.LEGEND_AREA;
+                }
+            }while(false);
+            
+            //PLOT_AREA
+            do{
+                var boundaries = this.config.boundaries();
+                if(x < boundaries.x.min || boundaries.x.max < x){
+                    break;
+                }
+                if(y < boundaries.y.min || boundaries.y.max < y){
+                    break;
+                }
+                return ChartEventPositionAttr.PLOT_AREA;
+            }while(false);
+            
+            //OUTSIDE
+            return ChartEventPositionAttr.OUTSIDE;
+        }
+
         public void add_serie(Serie serie) {
             this.series.register(serie);
         }

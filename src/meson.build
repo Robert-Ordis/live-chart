@@ -29,6 +29,7 @@ sources = files(
     'threshold_line.vala',
     'utils.vala',
     'values.vala',
+    'handler/chart_event_builder.vala',
     'static/static_chart.vala',
     'static/static_series.vala',
     'static/static_serie.vala',
