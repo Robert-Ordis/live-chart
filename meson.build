@@ -29,7 +29,8 @@ endif
 deps = [
   gtk,
   gee,
-  libm
+  libm,
+  meson.get_compiler('vala').find_library('posix')
 ]
 
 subdir('src')
