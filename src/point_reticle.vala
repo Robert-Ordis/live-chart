@@ -1,13 +1,27 @@
 using Cairo;
 
 namespace LiveChart {
-    public class PointReticle : Drawable, GLib.Object {
+    public class PointReticle : GLib.Object {
         //public members.
-        public string name { get; private set; }
+        private string name_;
+        public string name { 
+            public get{ return name_; }
+            private set {
+                name_ = value;
+                this.refresh_plotname();
+            }
+        }
         
         //For Detecting nearest value from reticle.
         private Gee.SortedSet<TimestampedValue?> workset;
-        public Serie? target_serie = null;
+        private Serie? target_serie_ = null;
+        public Serie? target_serie {
+            public get { return target_serie_; }
+            public set {
+                target_serie_ = value;
+                this.refresh_plotname();
+            }
+        }
         
         //Parent Chart instance.
         internal unowned Chart? parent = null;
@@ -19,11 +33,8 @@ namespace LiveChart {
         
         //Rendering associated
         public Path line { get; set; }
-        
-        //Boiler plate
-        protected BoundingBox bounding_box = BoundingBox(){ x = 0, y = 0, width = 0, height = 0};
-        public BoundingBox get_bounding_box() { return this.bounding_box; }
-        public bool visible { get; set; default = true; }
+        public bool visible = true;
+        private string plot_name = "";
         
         internal PointReticle(string name = ""){
             this.name = name;
@@ -49,7 +60,7 @@ namespace LiveChart {
             }
         }
         
-        private bool check_inbounds(Config config, ref Boundaries boundaries){
+        private bool check_inbounds(Boundaries boundaries){
             if(
                 this.point.x.is_nan() ||
                 this.point.y.is_nan() ||
@@ -58,7 +69,6 @@ namespace LiveChart {
                 return false;
             }
             
-            boundaries = config.boundaries();
             if(boundaries.x.min > this.point.x || boundaries.x.max < this.point.x){
                 return false;
             }
@@ -132,14 +142,32 @@ namespace LiveChart {
             return tv;
         }
         
+        private void refresh_plotname(){
+            var no_name = (this.name == null || this.name == "");
+            var no_target = this.target_serie == null;
+            if(no_name && no_target){
+                this.plot_name = "";
+            }
+            else if(no_name){
+                this.plot_name = "%s".printf(this.target_serie.name);
+            }
+            else if(no_target){
+                this.plot_name = this.name;
+            }
+            else{
+                this.plot_name = "%s->%s".printf(this.name, this.target_serie.name);
+            }
+        }
+        
         public bool get_aimed_value(ref TimestampedValue tv){
             
             if(this.parent == null){
                 return false;
             }
             
-            var boundaries = Boundaries();
-            if(!this.check_inbounds(this.parent.config, ref boundaries)){
+            var boundaries = this.parent.config.boundaries();
+            
+            if(!this.check_inbounds(boundaries)){
                 return false;
             }
             
@@ -148,15 +176,19 @@ namespace LiveChart {
             return true;
         }
         
-        public void draw(Context ctx, Config config){
-            if(!this.visible || this.parent == null){
-                return;
-            }
-            var boundaries = Boundaries();
+        internal bool draw_reticle(Context ctx, Config config, ReticleContext r_context){
             
-            if(!this.check_inbounds(config, ref boundaries)){
-                return;
+            var boundaries = r_context.boundaries;
+            if(!this.visible || this.parent == null){
+                return false;
             }
+            
+            if(!this.check_inbounds(boundaries)){
+                return false;
+            }
+            
+            var tv = this.get_aimed_value_(config, boundaries);
+            var plot_point = Points.value_to_point(tv, tv, config, boundaries, 0.0);
             
             if(this.target_serie != null){
                 this.target_serie.line.configure(ctx);
@@ -165,18 +197,36 @@ namespace LiveChart {
                 this.line.configure(ctx);
             }
             
-            var tv = this.get_aimed_value_(config, boundaries);
-            var plot_point = Points.value_to_point(tv, tv, config, boundaries, 0.0);
+            var summary_txt = "%s[%s, %f]".printf(this.plot_name, config.time.get_time_str((int64)tv.timestamp), tv.value);
+            if(this.locked){
+                //locked: on point->only name
+                //        on summary->both name and vals.
+                ctx.move_to(r_context.pos_label.x, r_context.pos_label.y);
+                ctx.show_text(summary_txt);
+                ctx.move_to(0.0, plot_point.y);
+                ctx.show_text(this.plot_name);
+            }
+            else{
+                TextExtents extents = TextExtents();
+                ctx.text_extents(summary_txt, out extents);
+                var gap = (config.width - (this.point.x + extents.width));
+                if(gap > 0){
+                    gap = 0.0;
+                }
+                ctx.move_to(this.point.x + gap, this.point.y);
+                ctx.show_text(summary_txt);
+            }
             
-            ctx.move_to(this.point.x, this.point.y);
-            ctx.show_text("%s[%s, %f]".printf(this.name, config.time.get_time_str((int64)tv.timestamp), tv.value));
             
-            ctx.move_to((double) boundaries.x.min, plot_point.y);
-            ctx.line_to((double) boundaries.x.max, plot_point.y);
+            ctx.move_to(0.0, plot_point.y);
+            ctx.line_to(config.width, plot_point.y);
             ctx.move_to(plot_point.x, (double) boundaries.y.min);
             ctx.line_to(plot_point.x, (double) boundaries.y.max);
             ctx.stroke();
+            
+            return true;
         }
+        
         
     }
 }

@@ -20,6 +20,7 @@ sources = files(
     'path.vala',
     'point_reticle.vala',
     'points.vala',
+    'reticle_context.vala',
     'serie.vala',
     'serie_renderer.vala',
     'series.vala',

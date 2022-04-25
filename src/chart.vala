@@ -1,5 +1,29 @@
 using Cairo;
 
+public class ClkTest {
+    Gee.Map<int, int> map = new Gee.TreeMap<int, int>();
+    public void show(){
+        print("=============\n");
+        double total = 0.0;
+        double count = 0.0;
+        foreach(var e in map.entries){
+            print("[%2d: %03d] ".printf(e.key, e.value));
+            total += (double)(e.key * e.value);
+            count += (double)e.value;
+        }
+        print("\ncount: %f, total: %f, ave: %f\n".printf(count, total, total/count));
+        print("====/\n");
+    }
+    public void count(int c){
+        if(this.map.has_key(c)){
+            this.map[c] = this.map[c] + 1;
+        }
+        else{
+            this.map[c] = 1;
+        }
+    }
+}
+
 namespace LiveChart {
 
     public errordomain ChartError
@@ -21,7 +45,7 @@ namespace LiveChart {
         
         private int64 prev_time;
         
-        private Gee.List<PointReticle> reticles = new Gee.LinkedList<PointReticle>();
+        private ReticleContext reticles = new ReticleContext(2, 2);
         
         
         public signal void on_legend_clicked(Gdk.Device device, Serie? serie, uint btn_num);
@@ -256,9 +280,7 @@ namespace LiveChart {
             this.grid.draw(ctx, config);
             if(this.legend != null) this.legend.draw(ctx, config);
             
-            foreach(Drawable reticle in this.reticles){
-                reticle.draw(ctx, this.config);
-            }
+            reticles.draw(ctx, config);
             
             ctx.rectangle(boundaries.x.min, boundaries.y.min, boundaries.width, boundaries.height);
             ctx.clip();
