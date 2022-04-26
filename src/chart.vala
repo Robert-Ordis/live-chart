@@ -73,8 +73,8 @@ namespace LiveChart {
 #endif            
 #if GTK4
             this.set_draw_func((_, ctx, width, height) => {
-                var dx = allocation.width - this.config.width;
-                var dy = allocation.height - this.config.height;
+                var dx = width - this.config.width;
+                var dy = height - this.config.height;
                 this.config.height = height;
                 this.config.width = width;
                 foreach(var reticle in this.reticles){
