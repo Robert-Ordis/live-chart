@@ -61,7 +61,6 @@ namespace LiveChart {
         }
         
         internal void adjust_aiming(double dx, double dy, Config config){
-            print("adjust: dx=%f, dy=%f\n".printf(dx, dy));
             if(!this.point.x.is_nan()){
                 this.point.x += dx;
             }
