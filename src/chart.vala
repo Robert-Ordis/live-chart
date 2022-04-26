@@ -61,15 +61,25 @@ namespace LiveChart {
 
 #if GTK3
             this.size_allocate.connect((allocation) => {
+                var dx = allocation.width - this.config.width;
+                var dy = allocation.height - this.config.height;
                 this.config.height = allocation.height;
                 this.config.width = allocation.width;
+                foreach(var reticle in this.reticles){
+                    reticle.adjust_aiming(dx, dy, this.config);
+                }
             });
             this.draw.connect(render);
 #endif            
 #if GTK4
             this.set_draw_func((_, ctx, width, height) => {
+                var dx = allocation.width - this.config.width;
+                var dy = allocation.height - this.config.height;
                 this.config.height = height;
                 this.config.width = width;
+                foreach(var reticle in this.reticles){
+                    reticle.adjust_aiming(dx, dy, this.config);
+                }
                 this.render(_, ctx);
             });
 #endif

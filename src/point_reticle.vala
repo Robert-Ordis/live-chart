@@ -60,6 +60,26 @@ namespace LiveChart {
             }
         }
         
+        internal void adjust_aiming(double dx, double dy, Config config){
+            print("adjust: dx=%f, dy=%f\n".printf(dx, dy));
+            if(!this.point.x.is_nan()){
+                this.point.x += dx;
+            }
+            
+            if(!this.point.y.is_nan()){
+                var boundaries = config.boundaries();
+                var old_height = boundaries.height - dy;
+                if(old_height != 0.0){
+                    var diff = this.point.y - boundaries.y.min;
+                    diff = diff / old_height * boundaries.height;
+                    this.point.y = boundaries.y.min + diff;
+                }
+                else{
+                    this.point.y = boundaries.y.min + boundaries.height / 2;
+                }
+            }
+        }
+        
         private bool check_inbounds(Boundaries boundaries){
             if(
                 this.point.x.is_nan() ||
