@@ -152,6 +152,7 @@ namespace LiveChart {
                     break;
                 case LEGEND_AREA:
                     this.legend.slide_list(dy * 4);
+                    this.queue_draw();
                     break;
                 default:
                     break;
