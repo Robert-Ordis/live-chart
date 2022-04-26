@@ -33,8 +33,11 @@ namespace LiveChart {
 
     public Gee.List<float?> golden_divisors(float value) {
         //No golden divisors for 0
+        
+        var ndivs = new Gee.ArrayList<float?>();
+        
         if (value == 0) {
-            return new Gee.ArrayList<float?>();
+            return ndivs;
         }
 
         //Handle values below 1
@@ -53,11 +56,13 @@ namespace LiveChart {
                 }
             } 
         }
+        if(divs.size <= 0){
+            return ndivs;
+        }
         divs.sort((a, b) => {
             return a - b;
         });
 
-        var ndivs = new Gee.ArrayList<float?>();
         var last_div = divs.last();
         for (int i = divs.size - 1; i >= 0; i--) {
             var current = divs.get(i);
