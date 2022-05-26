@@ -55,11 +55,16 @@ private void register_chart() {
         //given
         var window = new Gtk.Window();
         var chart = new LiveChart.Chart();
+#if GTK3
         window.add(chart);
         window.show();
         window.resize(50, 50);
         chart.show_all();
- 
+#endif
+#if GTK4
+        window.set_child(chart);
+        window.present();
+#endif
         //when
         try {
             chart.to_png("export.png");
@@ -209,11 +214,24 @@ private void register_chart() {
        
         //when
         //then
+#if GTK3
         Timeout.add(1000, () => {
             Gtk.main_quit();
             return false;
         });
         Gtk.main();
+#endif
+#if GTK4
+		var app = new Gtk.Application("com.example.GtkApplication", ApplicationFlags.FLAGS_NONE);
+		app.activate.connect (() => {
+			
+		});
+		Timeout.add(1000, () => {
+			app.quit();
+			return false;
+		});
+		app.run();
+#endif
     });
 
         Test.add_func("/LiveChart/Chart/background#main_color_should_be_accessible_even_if_deprected", () => {

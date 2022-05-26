@@ -1,8 +1,9 @@
 void main (string[] args) {
 
     Test.init(ref args);
+#if GTK3
     Gtk.init(ref args);
-
+#endif
     register_config();
     register_bounds();
     register_values();

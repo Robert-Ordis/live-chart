@@ -7,8 +7,8 @@ private void register_bar() {
         Cairo.Context context = new Cairo.Context(surface);
         context.set_antialias(Cairo.Antialias.NONE);
 
-        var red = Gdk.RGBA() {red = 1.0, green = 0.0, blue = 0.0, alpha = 1.0 };
-        var white = Gdk.RGBA() {red = 1.0, green = 1.0, blue = 1.0, alpha = 1.0 };
+        var red = Gdk.RGBA() {red = 1.0f, green = 0.0f, blue = 0.0f, alpha = 1.0f };
+        var white = Gdk.RGBA() {red = 1.0f, green = 1.0f, blue = 1.0f, alpha = 1.0f };
 
         cairo_background(context, red, WIDTH, HEIGHT);
 
@@ -44,13 +44,13 @@ private void register_bar() {
         Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, SURFACE_WIDTH, SURFACE_HEIGHT);
         Cairo.Context context = new Cairo.Context(surface);
 
-        var black = Gdk.RGBA() {red = 0.0, green = 0.0, blue = 0.0, alpha = 1.0};
+        var black = Gdk.RGBA() {red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 1.0f};
         cairo_background(context, black);
 
         var values = new LiveChart.Values();
        
         var bar = new LiveChart.Bar(values);
-        bar.line.color = Gdk.RGBA() {red = 1.0, green = 0.0, blue = 0.0, alpha = 1.0 };
+        bar.line.color = Gdk.RGBA() {red = 1.0f, green = 0.0f, blue = 0.0f, alpha = 1.0f };
 
         //When
         bar.draw(context, create_config());

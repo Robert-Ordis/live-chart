@@ -7,7 +7,7 @@ private void register_area() {
 
         var points = LiveChart.Points.create(new LiveChart.Values(), create_config());
        
-        var area = new LiveChart.Area(points, Gdk.RGBA() {red = 1.0, green = 0.0, blue = 0.0, alpha = 1.0 }, 1.0);
+        var area = new LiveChart.Area(points, Gdk.RGBA() {red = 1.0f, green = 0.0f, blue = 0.0f, alpha = 1.0f }, 1.0);
 
         //When
         area.draw(context, create_config());

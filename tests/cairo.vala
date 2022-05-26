@@ -1,7 +1,7 @@
 const int SURFACE_WIDTH = 10;
 const int SURFACE_HEIGHT = 10;
 
-void cairo_background(Cairo.Context context, Gdk.RGBA color = {0.0, 0.0, 0.0, 1.0}, int? width = null, int? height = null) {
+void cairo_background(Cairo.Context context, Gdk.RGBA color = {0.0f, 0.0f, 0.0f, 1.0f}, int? width = null, int? height = null) {
     context.set_source_rgba(color.red, color.green, color.blue, color.alpha);
     context.rectangle(0, 0, width != null ? width : SURFACE_WIDTH, height != null ? height : SURFACE_HEIGHT);
     context.fill();
@@ -27,7 +27,7 @@ FromCoodinates color_at(Gdk.Pixbuf pixbuff, int width, int height) {
         var g = data[pos + 1];
         var b = data[pos + 2];
         var alpha = data[pos + 3];
-        return {(double) r/255, (double) g/255, (double) b/255, (double) alpha/255};
+        return {(float) r/255, (float) g/255, (float) b/255, (float) alpha/255};
     };
 }
 
@@ -69,7 +69,7 @@ ColorFromToCoodinates colors_at(Gdk.Pixbuf pixbuff, int width, int height) {
                 var g = data[pos + 1];
                 var b = data[pos + 2];
                 var alpha = data[pos + 3];
-                colors.add({red: (double) r/255, green: (double) g/255, blue: (double) b/255, alpha: (double) alpha/255});
+                colors.add({red: (float) r/255, green: (float) g/255, blue: (float) b/255, alpha: (float) alpha/255});
             }
         }
         return colors;
@@ -97,8 +97,8 @@ private void register_cairo() {
         Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, WIDTH, HEIGHT);
         Cairo.Context context = new Cairo.Context(surface);
 
-        var red = Gdk.RGBA() {red = 1.0, green = 0.0, blue = 0.0, alpha = 1.0};
-        var blue = Gdk.RGBA() {red = 0.0, green = 0.0, blue = 1.0, alpha = 1.0};
+        var red = Gdk.RGBA() {red = 1.0f, green = 0.0f, blue = 0.0f, alpha = 1.0f};
+        var blue = Gdk.RGBA() {red = 0.0f, green = 0.0f, blue = 1.0f, alpha = 1.0f};
 
         cairo_background(context, red, WIDTH, HEIGHT);
 
@@ -134,10 +134,10 @@ private void register_cairo() {
         Cairo.ImageSurface surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, WIDTH, HEIGHT);
         Cairo.Context context = new Cairo.Context(surface);
 
-        var red = Gdk.RGBA() {red = 1.0, green = 0.0, blue = 0.0, alpha = 1.0};
-        var blue = Gdk.RGBA() {red = 0.0, green = 0.0, blue = 1.0, alpha = 1.0};
-        var green = Gdk.RGBA() {red = 0.0, green = 1.0, blue = 0.0, alpha = 1.0};
-        var yellow = Gdk.RGBA() {red = 1.0, green = 1.0, blue = 0.0, alpha = 1.0};        
+        var red = Gdk.RGBA() {red = 1.0f, green = 0.0f, blue = 0.0f, alpha = 1.0f};
+        var blue = Gdk.RGBA() {red = 0.0f, green = 0.0f, blue = 1.0f, alpha = 1.0f};
+        var green = Gdk.RGBA() {red = 0.0f, green = 1.0f, blue = 0.0f, alpha = 1.0f};
+        var yellow = Gdk.RGBA() {red = 1.0f, green = 1.0f, blue = 0.0f, alpha = 1.0f};        
 
         cairo_background(context, red, WIDTH, HEIGHT);
 

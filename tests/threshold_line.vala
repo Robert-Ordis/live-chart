@@ -6,7 +6,7 @@ private void register_threshold_line() {
         cairo_background(context);
 
         var line = new LiveChart.ThresholdLine(7.5);
-        line.line.color = Gdk.RGBA() {red = 1.0, green = 0.0, blue = 0.0, alpha = 1.0 };
+        line.line.color = Gdk.RGBA() {red = 1.0f, green = 0.0f, blue = 0.0f, alpha = 1.0f };
 
         //When
         line.draw(context, create_config());
