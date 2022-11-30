@@ -1,0 +1,4 @@
+option('GTK',
+  type: 'integer',
+  value: 4,
+  description: 'GTK major version')

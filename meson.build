@@ -8,14 +8,11 @@ gee = dependency('gee-0.8')
 vala_args = ['--target-glib=2.50']
 
 #setting up gtk
-gtk_major = 3
-
+gtk_major = get_option('GTK')
 if gtk_major == 3
   gtk = dependency('gtk+-3.0', version: '>= 3.22')
   vala_args += ['--define=GTK3']
-endif
-
-if gtk_major == 4
+elif gtk_major == 4
   gtk = dependency('gtk4')
   vala_args += ['--define=GTK4']
 endif
@@ -34,5 +31,5 @@ deps = [
 ]
 
 subdir('src')
-subdir('tests')
+#subdir('tests')
 subdir('examples')
